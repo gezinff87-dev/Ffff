@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Notificações</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .card-header {
+            background-color: #4a00e0;
+            color: white;
+            padding: 20px;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #4a00e0;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: transform 0.2s;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-option.selected {
+            border-color: #333;
+            transform: scale(1.1);
+        }
+        
+        button {
+            background-color: #4a00e0;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #3800b0;
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .preview-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        #notificationPreview {
+            position: relative;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            min-height: 180px;
+            border-left: 6px solid #4a00e0;
+            transition: all 0.3s;
+        }
+        
+        .notification-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #222;
+        }
+        
+        .notification-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            float: left;
+            margin-right: 15px;
+        }
+        
+        .notification-description {
+            color: #555;
+            line-height: 1.5;
+            margin-top: 10px;
+        }
+        
+        .notification-time {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            display: block;
+        }
+        
+        .notifications-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            margin-top: 20px;
+        }
+        
+        .notifications-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .notifications-title {
+            font-size: 1.5rem;
+            color: #4a00e0;
+        }
+        
+        #clearBtn {
+            width: auto;
+            background-color: #e74c3c;
+            padding: 10px 20px;
+        }
+        
+        #clearBtn:hover {
+            background-color: #c0392b;
+        }
+        
+        #notificationsList {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .notification-item {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            border-left: 6px solid #4a00e0;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .notification-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .notification-item-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .notification-delete {
+            color: #e74c3c;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            width: auto;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .notification-delete:hover {
+            color: #c0392b;
+            background: none;
+            transform: none;
+        }
+        
+        .notification-item-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-right: 15px;
+            margin-bottom: 10px;
+            float: left;
+        }
+        
+        .notification-item-description {
+            color: #555;
+            line-height: 1.4;
+        }
+        
+        .notification-item-time {
+            color: #888;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            display: block;
+            text-align: right;
+        }
+        
+        .empty-message {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            padding: 30px;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 20px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-bell"></i> Gerador de Notificações</h1>
+            <p class="subtitle">Crie notificações personalizadas com título, imagem, descrição e muito mais. Visualize em tempo real e gerencie todas as notificações criadas.</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-edit"></i> Criar Nova Notificação
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="notificationTitle">Título da Notificação *</label>
+                        <input type="text" id="notificationTitle" placeholder="Digite o título da notificação" value="Nova Mensagem Recebida">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notificationImage">URL da Imagem</label>
+                        <input type="text" id="notificationImage" placeholder="Cole a URL de uma imagem ou deixe em branco" value="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80">
+                        <small>Use uma URL de imagem válida ou deixe em branco para usar a imagem padrão.</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notificationDescription">Descrição</label>
+                        <textarea id="notificationDescription" placeholder="Digite a descrição da notificação">Você recebeu uma nova mensagem de um contato importante. Clique para visualizar e responder.</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Cor de Fundo</label>
+                        <div class="color-picker">
+                            <div class="color-option selected" style="background-color: #4a00e0;" data-color="#4a00e0"></div>
+                            <div class="color-option" style="background-color: #00b09b;" data-color="#00b09b"></div>
+                            <div class="color-option" style="background-color: #ff416c;" data-color="#ff416c"></div>
+                            <div class="color-option" style="background-color: #11998e;" data-color="#11998e"></div>
+                            <div class="color-option" style="background-color: #8e2de2;" data-color="#8e2de2"></div>
+                            <div class="color-option" style="background-color: #f46b45;" data-color="#f46b45"></div>
+                        </div>
+                        <input type="hidden" id="selectedColor" value="#4a00e0">
+                    </div>
+                    
+                    <button id="createBtn">
+                        <i class="fas fa-plus-circle"></i> Criar Notificação
+                    </button>
+                    
+                    <button id="testBtn" style="background-color: #00b09b; margin-top: 10px;">
+                        <i class="fas fa-bell"></i> Gerar Notificação de Teste
+                    </button>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-eye"></i> Pré-visualização
+                    </div>
+                    <div class="card-body">
+                        <div id="notificationPreview">
+                            <div class="notification-title">Nova Mensagem Recebida</div>
+                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Preview" class="notification-image">
+                            <p class="notification-description">Você recebeu uma nova mensagem de um contato importante. Clique para visualizar e responder.</p>
+                            <span class="notification-time">Agora há pouco</span>
+                        </div>
+                        <p>A pré-visualização mostra como sua notificação ficará quando criada. A cor da borda esquerda muda de acordo com a cor selecionada.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="notifications-container">
+            <div class="notifications-header">
+                <h2 class="notifications-title"><i class="fas fa-list"></i> Notificações Criadas</h2>
+                <button id="clearBtn"><i class="fas fa-trash-alt"></i> Limpar Tudo</button>
+            </div>
+            
+            <div id="notificationsList">
+                <div class="empty-message">Nenhuma notificação criada ainda. Use o formulário acima para criar sua primeira notificação.</div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Gerador de Notificações &copy; 2023 - Criado com HTML, CSS e JavaScript</p>
+        </footer>
+    </div>
+
+    <script>
+        // Elementos do DOM
+        const titleInput = document.getElementById('notificationTitle');
+        const imageInput = document.getElementById('notificationImage');
+        const descriptionInput = document.getElementById('notificationDescription');
+        const selectedColorInput = document.getElementById('selectedColor');
+        const createBtn = document.getElementById('createBtn');
+        const testBtn = document.getElementById('testBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const previewElement = document.getElementById('notificationPreview');
+        const notificationsList = document.getElementById('notificationsList');
+        const colorOptions = document.querySelectorAll('.color-option');
+        
+        // Array para armazenar notificações
+        let notifications = [];
+        
+        // Carregar notificações do localStorage
+        function loadNotifications() {
+            const savedNotifications = localStorage.getItem('notifications');
+            if (savedNotifications) {
+                notifications = JSON.parse(savedNotifications);
+                renderNotifications();
+            }
+        }
+        
+        // Salvar notificações no localStorage
+        function saveNotifications() {
+            localStorage.setItem('notifications', JSON.stringify(notifications));
+        }
+        
+        // Atualizar pré-visualização
+        function updatePreview() {
+            const title = titleInput.value || "Título da Notificação";
+            const imageUrl = imageInput.value || "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80";
+            const description = descriptionInput.value || "Descrição da notificação...";
+            const color = selectedColorInput.value;
+            
+            previewElement.innerHTML = `
+                <div class="notification-title">${title}</div>
+                <img src="${imageUrl}" alt="Preview" class="notification-image" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80'">
+                <p class="notification-description">${description}</p>
+                <span class="notification-time">Agora há pouco</span>
+            `;
+            
+            previewElement.style.borderLeftColor = color;
+        }
+        
+        // Criar uma nova notificação
+        function createNotification() {
+            const title = titleInput.value.trim();
+            const imageUrl = imageInput.value.trim();
+            const description = descriptionInput.value.trim();
+            const color = selectedColorInput.value;
+            
+            if (!title) {
+                alert("Por favor, insira um título para a notificação.");
+                titleInput.focus();
+                return;
+            }
+            
+            // Validar URL da imagem
+            let finalImageUrl = imageUrl;
+            if (!imageUrl) {
+                finalImageUrl = "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80";
+            }
+            
+            const notification = {
+                id: Date.now(),
+                title: title,
+                imageUrl: finalImageUrl,
+                description: description || "Sem descrição...",
+                color: color,
+                timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+                date: new Date().toLocaleDateString('pt-BR')
+            };
+            
+            notifications.unshift(notification); // Adicionar no início do array
+            saveNotifications();
+            renderNotifications();
+            
+            // Reset do formulário (opcional)
+            // titleInput.value = "";
+            // descriptionInput.value = "";
+            
+            // Atualizar preview
+            updatePreview();
+            
+            // Mostrar mensagem de sucesso
+            alert("Notificação criada com sucesso!");
+        }
+        
+        // Gerar notificação de teste
+        function createTestNotification() {
+            const testTitles = [
+                "Novo E-mail Recebido",
+                "Lembrete Importante",
+                "Atualização do Sistema",
+                "Promoção Especial",
+                "Reunião Agendada"
+            ];
+            
+            const testDescriptions = [
+                "Você tem uma nova mensagem na sua caixa de entrada.",
+                "Não se esqueça da reunião importante de amanhã às 10h.",
+                "Uma nova atualização do sistema está disponível para instalação.",
+                "Aproveite nossa promoção de 50% de desconto em produtos selecionados.",
+                "Sua reunião com a equipe de desenvolvimento foi agendada para sexta-feira."
+            ];
+            
+            const testImages = [
+                "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+                "https://images.unsplash.com/photo-1558603668-6570496b66f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+                "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+                "https://images.unsplash.com/photo-1556740732-9d3c6b4f4b8a?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+                "https://images.unsplash.com/photo-1556742044-3c52d6e88c62?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+            ];
+            
+            const testColors = ["#4a00e0", "#00b09b", "#ff416c", "#11998e", "#8e2de2"];
+            
+            const randomIndex = Math.floor(Math.random() * testTitles.length);
+            
+            titleInput.value = testTitles[randomIndex];
+            imageInput.value = testImages[randomIndex];
+            descriptionInput.value = testDescriptions[randomIndex];
+            
+            // Selecionar cor aleatória
+            const randomColor = testColors[Math.floor(Math.random() * testColors.length)];
+            selectedColorInput.value = randomColor;
+            
+            // Atualizar seleção visual de cores
+            colorOptions.forEach(option => {
+                option.classList.remove('selected');
+                if (option.getAttribute('data-color') === randomColor) {
+                    option.classList.add('selected');
+                }
+            });
+            
+            updatePreview();
+            
+            // Criar notificação automaticamente
+            setTimeout(() => {
+                createNotification();
+            }, 300);
+        }
+        
+        // Renderizar notificações na lista
+        function renderNotifications() {
+            if (notifications.length === 0) {
+                notificationsList.innerHTML = '<div class="empty-message">Nenhuma notificação criada ainda. Use o formulário acima para criar sua primeira notificação.</div>';
+                return;
+            }
+            
+            notificationsList.innerHTML = notifications.map(notification => `
+                <div class="notification-item" style="border-left-color: ${notification.color};">
+                    <div class="notification-item-header">
+                        <div class="notification-item-title">${notification.title}</div>
+                        <button class="notification-delete" onclick="deleteNotification(${notification.id})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <img src="${notification.imageUrl}" alt="Notificação" class="notification-item-image" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80'">
+                    <p class="notification-item-description">${notification.description}</p>
+                    <span class="notification-item-time">${notification.date} às ${notification.timestamp}</span>
+                </div>
+            `).join('');
+        }
+        
+        // Excluir uma notificação
+        function deleteNotification(id) {
+            if (confirm("Tem certeza que deseja excluir esta notificação?")) {
+                notifications = notifications.filter(notification => notification.id !== id);
+                saveNotifications();
+                renderNotifications();
+            }
+        }
+        
+        // Limpar todas as notificações
+        function clearAllNotifications() {
+            if (notifications.length === 0) {
+                alert("Não há notificações para limpar.");
+                return;
+            }
+            
+            if (confirm("Tem certeza que deseja excluir todas as notificações? Esta ação não pode ser desfeita.")) {
+                notifications = [];
+                saveNotifications();
+                renderNotifications();
+            }
+        }
+        
+        // Inicializar
+        function init() {
+            // Carregar notificações salvas
+            loadNotifications();
+            
+            // Atualizar preview inicial
+            updatePreview();
+            
+            // Configurar seletores de cor
+            colorOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    colorOptions.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    selectedColorInput.value = option.getAttribute('data-color');
+                    updatePreview();
+                });
+            });
+            
+            // Event listeners para atualização em tempo real
+            titleInput.addEventListener('input', updatePreview);
+            imageInput.addEventListener('input', updatePreview);
+            descriptionInput.addEventListener('input', updatePreview);
+            
+            // Event listeners para botões
+            createBtn.addEventListener('click', createNotification);
+            testBtn.addEventListener('click', createTestNotification);
+            clearBtn.addEventListener('click', clearAllNotifications);
+            
+            // Permitir criar notificação com Enter no título
+            titleInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    createNotification();
+                }
+            });
+        }
+        
+        // Inicializar a aplicação quando o DOM estiver carregado
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
